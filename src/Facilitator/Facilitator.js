@@ -500,7 +500,6 @@ class Facilitator {
       gasLimit,
       nonce,
       hashLock,
-      unlockSecret,
       txOptionAuxiliary,
     ).then(() => {
       const messageHash = Message.getStakeMessageHash(
