@@ -43,7 +43,7 @@ node file_path [stake|redeem|redeemOSTPrime] amount beneficiary gasPrice gasLimi
 source Examples/mosaic_config.sh 
 
 // Example
-node Examples/FacilitatorWorker.js stake 100000 0x00000000000000000000beneficairyaddress 0 0
+node Examples/FacilitatorWorker.js stake 100000 '0x00000000000000000000beneficairyaddress' 0 0
 ```
 
 #### Redeem & unstake using facilitator worker
@@ -51,9 +51,9 @@ node Examples/FacilitatorWorker.js stake 100000 0x00000000000000000000beneficair
 source Examples/mosaic_config.sh 
 
 // Example for OSTPrime
-node Examples/FacilitatorWorker.js redeemOSTPrime 100000 0x00000000000000000000beneficairyaddress 0 0
+node Examples/FacilitatorWorker.js redeemOSTPrime 100000 '0x00000000000000000000beneficairyaddress' 0 0
 
 // Example for utility token
-node Examples/FacilitatorWorker.js redeem 100000 0x00000000000000000000beneficairyaddress 0 0
+node Examples/FacilitatorWorker.js redeem 100000 '0x00000000000000000000beneficairyaddress' 0 0
 ```
 
