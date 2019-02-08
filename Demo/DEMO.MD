@@ -1,8 +1,10 @@
 # Run demo for `Stake & Mint` and `Redeem & Unstake`.
+<!--
 #### Install Package.
 ```js
 npm install @openstfoundation/mosaic.js
 ```
+-->
 
 #### Populate the enviornment variables with RPC endpoint and addresses.
 or update the content in `Demo/mosaic_config.sh`
