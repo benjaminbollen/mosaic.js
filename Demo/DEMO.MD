@@ -27,12 +27,12 @@ export AUXILIARY_FACILITATOR_PASSWORD=''
 ```
 #### Start anchor worker
 ```js
-source Examples/mosaic_config.sh 
-node Examples/AnchorWorker.js
+source Demo/mosaic_config.sh 
+node Demo/AnchorWorker.js
 ```
 #### Using facilitator worker
 ```js
-source Examples/mosaic_config.sh 
+source Demo/mosaic_config.sh 
 
 // The format to run the facilitator is as shown below.
 node file_path [stake|redeem|redeemOSTPrime] amount beneficiary gasPrice gasLimit
@@ -40,20 +40,20 @@ node file_path [stake|redeem|redeemOSTPrime] amount beneficiary gasPrice gasLimi
 
 #### Stake & Mint using facilitator worker
 ```js
-source Examples/mosaic_config.sh 
+source Demo/mosaic_config.sh 
 
 // Example
-node Examples/FacilitatorWorker.js stake 100000 '0x00000000000000000000beneficairyaddress' 0 0
+node Demo/FacilitatorWorker.js stake 100000 '0x00000000000000000000beneficairyaddress' 0 0
 ```
 
 #### Redeem & unstake using facilitator worker
 ```js
-source Examples/mosaic_config.sh 
+source Demo/mosaic_config.sh 
 
 // Example for OSTPrime
-node Examples/FacilitatorWorker.js redeemOSTPrime 100000 '0x00000000000000000000beneficairyaddress' 0 0
+node Demo/FacilitatorWorker.js redeemOSTPrime 100000 '0x00000000000000000000beneficairyaddress' 0 0
 
 // Example for utility token
-node Examples/FacilitatorWorker.js redeem 100000 '0x00000000000000000000beneficairyaddress' 0 0
+node Demo/FacilitatorWorker.js redeem 100000 '0x00000000000000000000beneficairyaddress' 0 0
 ```
 
