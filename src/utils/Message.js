@@ -1,3 +1,5 @@
+'use strict';
+
 const Web3 = require('web3');
 
 const MessageStatus = Object.freeze({
@@ -94,7 +96,7 @@ class Message {
   /**
    * Generate the redeem intent hash from the redeem request params.
    *
-   * @param {string} amount Stake amount.
+   * @param {string} amount Redeem amount.
    * @param {string} beneficiary Beneficiary address.
    * @param {string} coGatewayAddress CoGateway contract address.
    *
@@ -162,7 +164,7 @@ class Message {
   /**
    * Generate the redeem message hash.
    *
-   * @param {string} amount Stake amount.
+   * @param {string} amount Redeem amount.
    * @param {string} beneficiary Beneficiary address.
    * @param {string} coGatewayAddress Gateway contract address.
    * @param {nonce} nonce Nonce.

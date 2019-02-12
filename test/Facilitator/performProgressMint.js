@@ -1,33 +1,14 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const sinon = require('sinon');
-const Facilitator = require('../../src/Facilitator/Facilitator');
-const TestMosaic = require('../../test_utils/GetTestMosaic');
+const Facilitator = require('../../src/Facilitator');
+const TestMosaic = require('../../test_utils/TestMosaic');
 const AssertAsync = require('../../test_utils/AssertAsync');
 const SpyAssert = require('../../test_utils/SpyAssert');
 const Message = require('../../src/utils/Message');
 
 const MessageStatus = Message.messageStatus();
-const assert = chai.assert;
 
 describe('Facilitator.performProgressMint()', () => {
   let mosaic;
@@ -54,6 +35,7 @@ describe('Facilitator.performProgressMint()', () => {
       sinon.fake.resolves(progressMintResult),
     );
   };
+
   const teardown = () => {
     sinon.restore();
     spyCall.restore();
@@ -77,38 +59,49 @@ describe('Facilitator.performProgressMint()', () => {
   });
 
   it('should throw an error when message hash is undefined', async () => {
-    delete progressMintParams.messageHash;
     await AssertAsync.reject(
       facilitator.performProgressMint(
-        progressMintParams.messageHash,
+        undefined,
         progressMintParams.unlockSecret,
         progressMintParams.txOptions,
       ),
-      `Invalid message hash: ${progressMintParams.messageHash}.`,
+      'Invalid message hash: undefined.',
     );
   });
 
   it('should throw an error when unlock secret is undefined', async () => {
-    delete progressMintParams.unlockSecret;
     await AssertAsync.reject(
       facilitator.performProgressMint(
         progressMintParams.messageHash,
-        progressMintParams.unlockSecret,
+        undefined,
         progressMintParams.txOptions,
       ),
-      `Invalid unlock secret: ${progressMintParams.unlockSecret}.`,
+      'Invalid unlock secret: undefined.',
     );
   });
 
   it('should throw an error when transaction options is undefined', async () => {
-    delete progressMintParams.txOptions;
+    await AssertAsync.reject(
+      facilitator.performProgressMint(
+        progressMintParams.messageHash,
+        progressMintParams.unlockSecret,
+        undefined,
+      ),
+      'Invalid transaction option: undefined.',
+    );
+  });
+
+  it('should throw an error when from address in transaction options is undefined', async () => {
+    delete progressMintParams.txOptions.from;
     await AssertAsync.reject(
       facilitator.performProgressMint(
         progressMintParams.messageHash,
         progressMintParams.unlockSecret,
         progressMintParams.txOptions,
       ),
-      `Invalid transaction option: ${progressMintParams.txOptions}.`,
+      `Invalid from address ${
+        progressMintParams.txOptions.from
+      } in transaction options.`,
     );
   });
 

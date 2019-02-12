@@ -1,23 +1,3 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
-
 'use strict';
 
 const BN = require('bn.js');
@@ -36,22 +16,16 @@ class EIP20Token {
    * @param {string} tokenAddress EIP20Token contract address.
    */
   constructor(web3, tokenAddress) {
-    if (web3 instanceof Web3) {
-      this.web3 = web3;
-    } else {
-      const err = new TypeError(
-        "Mandatory Parameter 'web3' is missing or invalid",
-      );
-      throw err;
+    if (!(web3 instanceof Web3)) {
+      throw new TypeError("Mandatory Parameter 'web3' is missing or invalid");
     }
-
     if (!Web3.utils.isAddress(tokenAddress)) {
-      const err = new TypeError(
-        "Mandatory Parameter 'tokenAddress' is missing or invalid.",
+      throw new TypeError(
+        `Mandatory Parameter 'tokenAddress' is missing or invalid: ${tokenAddress}`,
       );
-      throw err;
     }
 
+    this.web3 = web3;
     this.tokenAddress = tokenAddress;
 
     this.contract = Contracts.getEIP20Token(this.web3, this.tokenAddress);
@@ -64,9 +38,10 @@ class EIP20Token {
     }
 
     this.approve = this.approve.bind(this);
-    this._approveRawTx = this._approveRawTx.bind(this);
+    this.approveRawTx = this.approveRawTx.bind(this);
     this.allowance = this.allowance.bind(this);
     this.isAmountApproved = this.isAmountApproved.bind(this);
+    this.balanceOf = this.balanceOf.bind(this);
   }
 
   /**
@@ -87,7 +62,7 @@ class EIP20Token {
       const err = new TypeError(`Invalid from address: ${txOptions.from}.`);
       return Promise.reject(err);
     }
-    return this._approveRawTx(spenderAddress, amount).then((tx) =>
+    return this.approveRawTx(spenderAddress, amount).then((tx) =>
       Utils.sendTransaction(tx, txOptions),
     );
   }
@@ -100,7 +75,7 @@ class EIP20Token {
    *
    * @returns {Promise<boolean>} Promise that resolves to raw transaction object.
    */
-  _approveRawTx(spenderAddress, amount) {
+  approveRawTx(spenderAddress, amount) {
     if (!Web3.utils.isAddress(spenderAddress)) {
       const err = new TypeError(`Invalid spender address: ${spenderAddress}.`);
       return Promise.reject(err);

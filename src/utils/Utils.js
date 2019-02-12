@@ -1,22 +1,4 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
 const Web3Utils = require('web3-utils');
 const Web3 = require('web3');
@@ -78,9 +60,14 @@ class Utils {
    *
    * @returns {Promise} Promise object.
    */
-  static sendTransaction(tx, txOption) {
-    return new Promise((onResolve, onReject) => {
-      tx.send(txOption)
+  static async sendTransaction(tx, txOption) {
+    return new Promise(async (onResolve, onReject) => {
+      const txOptions = Object.assign({}, txOption);
+      if (!txOptions.gas) {
+        txOptions.gas = await tx.estimateGas(txOptions);
+      }
+
+      tx.send(txOptions)
         .on('transactionHash', (transactionHash) => {})
         .on('receipt', (receipt) => {
           return onResolve(receipt);
@@ -92,6 +79,16 @@ class Utils {
           return onReject(exception);
         });
     });
+  }
+
+  /**
+   * Prints a deprecation warning for deprecated ChainSetup methods.
+   * See {@link https://github.com/OpenSTFoundation/mosaic.js/issues/57}.
+   */
+  static deprecationNoticeChainSetup(method) {
+    console.warn(
+      `${method} has been deprecated. See https://github.com/OpenSTFoundation/mosaic.js/issues/57 for migration instructions.`,
+    );
   }
 }
 

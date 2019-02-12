@@ -1,33 +1,14 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const sinon = require('sinon');
-const Facilitator = require('../../src/Facilitator/Facilitator');
-const TestMosaic = require('../../test_utils/GetTestMosaic');
+const Facilitator = require('../../src/Facilitator');
+const TestMosaic = require('../../test_utils/TestMosaic');
 const AssertAsync = require('../../test_utils/AssertAsync');
 const SpyAssert = require('../../test_utils/SpyAssert');
 const Message = require('../../src/utils/Message');
 
 const MessageStatus = Message.messageStatus();
-const assert = chai.assert;
 
 describe('Facilitator.performProgressRedeem()', () => {
   let mosaic;
@@ -54,6 +35,7 @@ describe('Facilitator.performProgressRedeem()', () => {
       sinon.fake.resolves(progressRedeemResult),
     );
   };
+
   const teardown = () => {
     sinon.restore();
     spyCall.restore();
@@ -77,38 +59,49 @@ describe('Facilitator.performProgressRedeem()', () => {
   });
 
   it('should throw an error when message hash is undefined', async () => {
-    delete progressRedeemParams.messageHash;
     await AssertAsync.reject(
       facilitator.performProgressRedeem(
-        progressRedeemParams.messageHash,
+        undefined,
         progressRedeemParams.unlockSecret,
         progressRedeemParams.txOptions,
       ),
-      `Invalid message hash: ${progressRedeemParams.messageHash}.`,
+      'Invalid message hash: undefined.',
     );
   });
 
   it('should throw an error when unlock secret is undefined', async () => {
-    delete progressRedeemParams.unlockSecret;
     await AssertAsync.reject(
       facilitator.performProgressRedeem(
         progressRedeemParams.messageHash,
-        progressRedeemParams.unlockSecret,
+        undefined,
         progressRedeemParams.txOptions,
       ),
-      `Invalid unlock secret: ${progressRedeemParams.unlockSecret}.`,
+      'Invalid unlock secret: undefined.',
     );
   });
 
   it('should throw an error when transaction options is undefined', async () => {
-    delete progressRedeemParams.txOptions;
+    await AssertAsync.reject(
+      facilitator.performProgressRedeem(
+        progressRedeemParams.messageHash,
+        progressRedeemParams.unlockSecret,
+        undefined,
+      ),
+      'Invalid transaction option: undefined.',
+    );
+  });
+
+  it('should throw an error when from address in transaction options is undefined', async () => {
+    delete progressRedeemParams.txOptions.from;
     await AssertAsync.reject(
       facilitator.performProgressRedeem(
         progressRedeemParams.messageHash,
         progressRedeemParams.unlockSecret,
         progressRedeemParams.txOptions,
       ),
-      `Invalid transaction option: ${progressRedeemParams.txOptions}.`,
+      `Invalid from address ${
+        progressRedeemParams.txOptions.from
+      } in transaction options.`,
     );
   });
 

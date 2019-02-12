@@ -1,31 +1,11 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const sinon = require('sinon');
-const Facilitator = require('../../src/Facilitator/Facilitator');
-const TestMosaic = require('../../test_utils/GetTestMosaic');
+const Facilitator = require('../../src/Facilitator');
+const TestMosaic = require('../../test_utils/TestMosaic');
 const AssertAsync = require('../../test_utils/AssertAsync');
 const SpyAssert = require('../../test_utils/SpyAssert');
-
-const assert = chai.assert;
 
 describe('Facilitator.progressStakeMessage()', () => {
   let mosaic;
@@ -52,6 +32,7 @@ describe('Facilitator.progressStakeMessage()', () => {
     );
     spyCall = sinon.spy(facilitator, 'progressStakeMessage');
   };
+
   const teardown = () => {
     sinon.restore();
     spyCall.restore();
@@ -79,33 +60,43 @@ describe('Facilitator.progressStakeMessage()', () => {
   });
 
   it('should throw an error when message hash is undefined', async () => {
-    delete progressStakeMessageParams.messageHash;
     await AssertAsync.reject(
       facilitator.progressStakeMessage(
-        progressStakeMessageParams.messageHash,
+        undefined,
         progressStakeMessageParams.unlockSecret,
         progressStakeMessageParams.txOptionOrigin,
         progressStakeMessageParams.txOptionAuxiliary,
       ),
-      `Invalid message hash: ${progressStakeMessageParams.messageHash}.`,
+      'Invalid message hash: undefined.',
     );
   });
 
   it('should throw an error when unlock secret is undefined', async () => {
-    delete progressStakeMessageParams.unlockSecret;
     await AssertAsync.reject(
       facilitator.progressStakeMessage(
         progressStakeMessageParams.messageHash,
-        progressStakeMessageParams.unlockSecret,
+        undefined,
         progressStakeMessageParams.txOptionOrigin,
         progressStakeMessageParams.txOptionAuxiliary,
       ),
-      `Invalid unlock secret: ${progressStakeMessageParams.unlockSecret}.`,
+      'Invalid unlock secret: undefined.',
     );
   });
 
   it('should throw an error when origin transaction option is undefined', async () => {
-    delete progressStakeMessageParams.txOptionOrigin;
+    await AssertAsync.reject(
+      facilitator.progressStakeMessage(
+        progressStakeMessageParams.messageHash,
+        progressStakeMessageParams.unlockSecret,
+        undefined,
+        progressStakeMessageParams.txOptionAuxiliary,
+      ),
+      'Invalid origin transaction option: undefined.',
+    );
+  });
+
+  it('should throw an error when from address in origin transaction option is undefined', async () => {
+    delete progressStakeMessageParams.txOptionOrigin.from;
     await AssertAsync.reject(
       facilitator.progressStakeMessage(
         progressStakeMessageParams.messageHash,
@@ -113,14 +104,26 @@ describe('Facilitator.progressStakeMessage()', () => {
         progressStakeMessageParams.txOptionOrigin,
         progressStakeMessageParams.txOptionAuxiliary,
       ),
-      `Invalid origin transaction option: ${
-        progressStakeMessageParams.txOptionOrigin
-      }.`,
+      `Invalid from address ${
+        progressStakeMessageParams.txOptionOrigin.from
+      } in origin transaction options.`,
     );
   });
 
   it('should throw an error when auxiliary transaction option is undefined', async () => {
-    delete progressStakeMessageParams.txOptionAuxiliary;
+    await AssertAsync.reject(
+      facilitator.progressStakeMessage(
+        progressStakeMessageParams.messageHash,
+        progressStakeMessageParams.unlockSecret,
+        progressStakeMessageParams.txOptionOrigin,
+        undefined,
+      ),
+      'Invalid auxiliary transaction option: undefined.',
+    );
+  });
+
+  it('should throw an error when from address in auxiliary transaction option is undefined', async () => {
+    delete progressStakeMessageParams.txOptionAuxiliary.from;
     await AssertAsync.reject(
       facilitator.progressStakeMessage(
         progressStakeMessageParams.messageHash,
@@ -128,9 +131,9 @@ describe('Facilitator.progressStakeMessage()', () => {
         progressStakeMessageParams.txOptionOrigin,
         progressStakeMessageParams.txOptionAuxiliary,
       ),
-      `Invalid auxiliary transaction option: ${
-        progressStakeMessageParams.txOptionAuxiliary
-      }.`,
+      `Invalid from address ${
+        progressStakeMessageParams.txOptionAuxiliary.from
+      } in auxiliary transaction options.`,
     );
   });
 

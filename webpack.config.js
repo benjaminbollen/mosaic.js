@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -15,6 +17,10 @@ const commonConfig = (target, babelTargets) => {
     output: {
       path: path.resolve(__dirname, 'lib'),
       filename: `[name].${target}.js`,
+    },
+    externals: {
+      web3: 'web3',
+      'web3-eth-accounts': 'web3-eth-accounts',
     },
     plugins: [
       new webpack.NormalModuleReplacementPlugin(

@@ -1,32 +1,12 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const Web3 = require('web3');
 const sinon = require('sinon');
 const EIP20Gateway = require('../../src/ContractInteract/EIP20Gateway');
 const EIP20Token = require('../../src/ContractInteract/EIP20Token');
 const SpyAssert = require('../../test_utils/SpyAssert');
 const AssertAsync = require('../../test_utils/AssertAsync');
-
-const assert = chai.assert;
 
 describe('EIP20Gateway.isBountyAmountApproved()', () => {
   let web3;
@@ -40,16 +20,16 @@ describe('EIP20Gateway.isBountyAmountApproved()', () => {
 
   let mockedValueToken;
   let spyGetBounty;
-  let spyGetEIP20BaseToken;
+  let spyGetBaseTokenContract;
   let spyIsAmountApproved;
   let spyCall;
 
   const setup = () => {
     const token = new EIP20Token(web3, baseTokenAddress);
     mockedValueToken = sinon.mock(token);
-    spyGetEIP20BaseToken = sinon.replace(
+    spyGetBaseTokenContract = sinon.replace(
       gateway,
-      'getEIP20BaseToken',
+      'getBaseTokenContract',
       sinon.fake.resolves(mockedValueToken.object),
     );
     spyIsAmountApproved = sinon.replace(
@@ -85,7 +65,7 @@ describe('EIP20Gateway.isBountyAmountApproved()', () => {
   it('should throw an error when facilitator address is undefined', async () => {
     await AssertAsync.reject(
       gateway.isBountyAmountApproved(undefined),
-      `Invalid facilitator address: ${undefined}.`,
+      'Invalid facilitator address: undefined.',
     );
   });
 
@@ -99,7 +79,7 @@ describe('EIP20Gateway.isBountyAmountApproved()', () => {
     );
 
     SpyAssert.assert(spyGetBounty, 1, [[]]);
-    SpyAssert.assert(spyGetEIP20BaseToken, 1, [[]]);
+    SpyAssert.assert(spyGetBaseTokenContract, 1, [[]]);
     SpyAssert.assert(spyIsAmountApproved, 1, [
       [facilitatorAddress, gatewayAddress, mockedBountyAmount],
     ]);

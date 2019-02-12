@@ -1,32 +1,12 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const Web3 = require('web3');
 const sinon = require('sinon');
 const EIP20Gateway = require('../../src/ContractInteract/EIP20Gateway');
 const SpyAssert = require('../../test_utils/SpyAssert');
 const AssertAsync = require('../../test_utils/AssertAsync');
 const Utils = require('../../src/utils/Utils');
-
-const assert = chai.assert;
 
 describe('EIP20Gateway.confirmRedeemIntent()', () => {
   let web3;
@@ -44,7 +24,7 @@ describe('EIP20Gateway.confirmRedeemIntent()', () => {
   const setup = () => {
     spyRawTx = sinon.replace(
       gateway,
-      '_confirmRedeemIntentRawTx',
+      'confirmRedeemIntentRawTx',
       sinon.fake.resolves(mockedTx),
     );
 
@@ -89,7 +69,7 @@ describe('EIP20Gateway.confirmRedeemIntent()', () => {
     mockedTx = 'MockedTx';
   });
 
-  it('should throw error transaction object is invalid', async () => {
+  it('should throw error when transaction object is invalid', async () => {
     await AssertAsync.reject(
       gateway.confirmRedeemIntent(
         redeemParams.staker,
@@ -103,11 +83,30 @@ describe('EIP20Gateway.confirmRedeemIntent()', () => {
         redeemParams.storageProof,
         undefined,
       ),
-      `Invalid transaction options: ${undefined}.`,
+      'Invalid transaction options: undefined.',
     );
   });
 
-  it('should return correct mocked transaction object', async () => {
+  it('should throw error when from address in transaction object is undefined', async () => {
+    delete txOptions.from;
+    await AssertAsync.reject(
+      gateway.confirmRedeemIntent(
+        redeemParams.staker,
+        redeemParams.nonce,
+        redeemParams.beneficiary,
+        redeemParams.amount,
+        redeemParams.gasPrice,
+        redeemParams.gasLimit,
+        redeemParams.hashLock,
+        redeemParams.blockHeight,
+        redeemParams.storageProof,
+        txOptions,
+      ),
+      `Invalid from address ${txOptions.from} in transaction options.`,
+    );
+  });
+
+  it('should return correct transaction object', async () => {
     setup();
     const result = await gateway.confirmRedeemIntent(
       redeemParams.staker,

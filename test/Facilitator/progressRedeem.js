@@ -1,32 +1,12 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const sinon = require('sinon');
-const Facilitator = require('../../src/Facilitator/Facilitator');
-const TestMosaic = require('../../test_utils/GetTestMosaic');
+const Facilitator = require('../../src/Facilitator');
+const TestMosaic = require('../../test_utils/TestMosaic');
 const AssertAsync = require('../../test_utils/AssertAsync');
 const SpyAssert = require('../../test_utils/SpyAssert');
 const Message = require('../../src/utils/Message');
-
-const assert = chai.assert;
 
 describe('Facilitator.progressRedeem()', () => {
   let mosaic;
@@ -96,10 +76,9 @@ describe('Facilitator.progressRedeem()', () => {
   });
 
   it('should throw an error when redeemer address is undefined', async () => {
-    delete redeemParams.redeemer;
     await AssertAsync.reject(
       facilitator.progressRedeem(
-        redeemParams.redeemer,
+        undefined,
         redeemParams.nonce,
         redeemParams.beneficiary,
         redeemParams.amount,
@@ -110,18 +89,17 @@ describe('Facilitator.progressRedeem()', () => {
         txOptionsOrigin,
         txOptionsAuxiliary,
       ),
-      `Invalid redeemer address: ${redeemParams.redeemer}.`,
+      'Invalid redeemer address: undefined.',
     );
   });
 
   it('should throw an error when redeem amount is zero', async () => {
-    delete redeemParams.amount;
     await AssertAsync.reject(
       facilitator.progressRedeem(
         redeemParams.redeemer,
         redeemParams.nonce,
         redeemParams.beneficiary,
-        redeemParams.amount,
+        undefined,
         redeemParams.gasPrice,
         redeemParams.gasLimit,
         redeemParams.hashLock,
@@ -129,17 +107,16 @@ describe('Facilitator.progressRedeem()', () => {
         txOptionsOrigin,
         txOptionsAuxiliary,
       ),
-      `Redeem amount must be greater than zero: ${redeemParams.amount}.`,
+      'Redeem amount must be greater than zero: undefined.',
     );
   });
 
   it('should throw an error when beneficiary address is undefined', async () => {
-    delete redeemParams.beneficiary;
     await AssertAsync.reject(
       facilitator.progressRedeem(
         redeemParams.redeemer,
         redeemParams.nonce,
-        redeemParams.beneficiary,
+        undefined,
         redeemParams.amount,
         redeemParams.gasPrice,
         redeemParams.gasLimit,
@@ -148,31 +125,29 @@ describe('Facilitator.progressRedeem()', () => {
         txOptionsOrigin,
         txOptionsAuxiliary,
       ),
-      `Invalid beneficiary address: ${redeemParams.beneficiary}.`,
+      'Invalid beneficiary address: undefined.',
     );
   });
 
   it('should throw an error when gas price is undefined', async () => {
-    delete redeemParams.gasPrice;
     await AssertAsync.reject(
       facilitator.progressRedeem(
         redeemParams.redeemer,
         redeemParams.nonce,
         redeemParams.beneficiary,
         redeemParams.amount,
-        redeemParams.gasPrice,
+        undefined,
         redeemParams.gasLimit,
         redeemParams.hashLock,
         redeemParams.unlockSecret,
         txOptionsOrigin,
         txOptionsAuxiliary,
       ),
-      `Invalid gas price: ${redeemParams.gasPrice}.`,
+      'Invalid gas price: undefined.',
     );
   });
 
   it('should throw an error when gas limit is undefined', async () => {
-    delete redeemParams.gasLimit;
     await AssertAsync.reject(
       facilitator.progressRedeem(
         redeemParams.redeemer,
@@ -180,22 +155,21 @@ describe('Facilitator.progressRedeem()', () => {
         redeemParams.beneficiary,
         redeemParams.amount,
         redeemParams.gasPrice,
-        redeemParams.gasLimit,
+        undefined,
         redeemParams.hashLock,
         redeemParams.unlockSecret,
         txOptionsOrigin,
         txOptionsAuxiliary,
       ),
-      `Invalid gas limit: ${redeemParams.gasLimit}.`,
+      'Invalid gas limit: undefined.',
     );
   });
 
   it('should throw an error when nonce is undefined', async () => {
-    delete redeemParams.nonce;
     await AssertAsync.reject(
       facilitator.progressRedeem(
         redeemParams.redeemer,
-        redeemParams.nonce,
+        undefined,
         redeemParams.beneficiary,
         redeemParams.amount,
         redeemParams.gasPrice,
@@ -205,7 +179,7 @@ describe('Facilitator.progressRedeem()', () => {
         txOptionsOrigin,
         txOptionsAuxiliary,
       ),
-      `Invalid redeemer nonce: ${redeemParams.nonce}.`,
+      'Invalid redeemer nonce: undefined.',
     );
   });
 
@@ -223,7 +197,7 @@ describe('Facilitator.progressRedeem()', () => {
         undefined,
         txOptionsAuxiliary,
       ),
-      `Invalid transaction options for origin chain: ${undefined}.`,
+      'Invalid transaction options for origin chain: undefined.',
     );
   });
 
@@ -241,7 +215,7 @@ describe('Facilitator.progressRedeem()', () => {
         txOptionsOrigin,
         undefined,
       ),
-      `Invalid transaction options for auxiliary chain: ${undefined}.`,
+      'Invalid transaction options for auxiliary chain: undefined.',
     );
   });
 
@@ -318,7 +292,7 @@ describe('Facilitator.progressRedeem()', () => {
       [
         redeemParams.amount,
         redeemParams.beneficiary,
-        facilitator.coGateway.coGatewayAddress,
+        facilitator.coGateway.address,
         redeemParams.nonce,
         redeemParams.gasPrice,
         redeemParams.gasLimit,

@@ -1,33 +1,14 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const sinon = require('sinon');
-const Facilitator = require('../../src/Facilitator/Facilitator');
-const TestMosaic = require('../../test_utils/GetTestMosaic');
+const Facilitator = require('../../src/Facilitator');
+const TestMosaic = require('../../test_utils/TestMosaic');
 const AssertAsync = require('../../test_utils/AssertAsync');
 const SpyAssert = require('../../test_utils/SpyAssert');
 const Message = require('../../src/utils/Message');
 
 const MessageStatus = Message.messageStatus();
-const assert = chai.assert;
 
 describe('Facilitator.confirmStakeIntent()', () => {
   let mosaic;
@@ -122,10 +103,9 @@ describe('Facilitator.confirmStakeIntent()', () => {
   });
 
   it('should throw an error when staker address is undefined', async () => {
-    delete stakeParams.staker;
     await AssertAsync.reject(
       facilitator.confirmStakeIntent(
-        stakeParams.staker,
+        undefined,
         stakeParams.amount,
         stakeParams.beneficiary,
         stakeParams.gasPrice,
@@ -134,16 +114,15 @@ describe('Facilitator.confirmStakeIntent()', () => {
         stakeParams.hashLock,
         txOptions,
       ),
-      `Invalid staker address: ${stakeParams.staker}.`,
+      'Invalid staker address: undefined.',
     );
   });
 
   it('should throw an error when stake amount is zero', async () => {
-    stakeParams.amount = '0';
     await AssertAsync.reject(
       facilitator.confirmStakeIntent(
         stakeParams.staker,
-        stakeParams.amount,
+        '0',
         stakeParams.beneficiary,
         stakeParams.gasPrice,
         stakeParams.gasLimit,
@@ -151,63 +130,59 @@ describe('Facilitator.confirmStakeIntent()', () => {
         stakeParams.hashLock,
         txOptions,
       ),
-      `Stake amount must be greater than be zero: ${stakeParams.amount}.`,
+      `Stake amount must be greater than be zero: ${'0'}.`,
     );
   });
 
   it('should throw an error when beneficiary address is undefined', async () => {
-    delete stakeParams.beneficiary;
     await AssertAsync.reject(
       facilitator.confirmStakeIntent(
         stakeParams.staker,
         stakeParams.amount,
-        stakeParams.beneficiary,
+        undefined,
         stakeParams.gasPrice,
         stakeParams.gasLimit,
         stakeParams.nonce,
         stakeParams.hashLock,
         txOptions,
       ),
-      `Invalid beneficiary address: ${stakeParams.beneficiary}.`,
+      'Invalid beneficiary address: undefined.',
     );
   });
 
   it('should throw an error when gas price is undefined', async () => {
-    delete stakeParams.gasPrice;
     await AssertAsync.reject(
       facilitator.confirmStakeIntent(
         stakeParams.staker,
         stakeParams.amount,
         stakeParams.beneficiary,
-        stakeParams.gasPrice,
+        undefined,
         stakeParams.gasLimit,
         stakeParams.nonce,
         stakeParams.hashLock,
         txOptions,
       ),
-      `Invalid gas price: ${stakeParams.gasPrice}.`,
+      'Invalid gas price: undefined.',
     );
   });
 
   it('should throw an error when gas limit is undefined', async () => {
-    delete stakeParams.gasLimit;
     await AssertAsync.reject(
       facilitator.confirmStakeIntent(
         stakeParams.staker,
         stakeParams.amount,
         stakeParams.beneficiary,
         stakeParams.gasPrice,
-        stakeParams.gasLimit,
+        undefined,
         stakeParams.nonce,
         stakeParams.hashLock,
         txOptions,
       ),
-      `Invalid gas limit: ${stakeParams.gasLimit}.`,
+      'Invalid gas limit: undefined.',
     );
   });
 
   it('should throw an error when nonce is undefined', async () => {
-    delete stakeParams.nonce;
     await AssertAsync.reject(
       facilitator.confirmStakeIntent(
         stakeParams.staker,
@@ -215,11 +190,11 @@ describe('Facilitator.confirmStakeIntent()', () => {
         stakeParams.beneficiary,
         stakeParams.gasPrice,
         stakeParams.gasLimit,
-        stakeParams.nonce,
+        undefined,
         stakeParams.hashLock,
         txOptions,
       ),
-      `Invalid staker nonce: ${stakeParams.nonce}.`,
+      'Invalid staker nonce: undefined.',
     );
   });
 
@@ -235,7 +210,7 @@ describe('Facilitator.confirmStakeIntent()', () => {
         undefined,
         txOptions,
       ),
-      `Invalid hash lock: ${undefined}.`,
+      'Invalid hash lock: undefined.',
     );
   });
 
@@ -251,7 +226,7 @@ describe('Facilitator.confirmStakeIntent()', () => {
         stakeParams.hashLock,
         undefined,
       ),
-      `Invalid transaction options: ${undefined}.`,
+      'Invalid transaction options: undefined.',
     );
   });
 
@@ -315,7 +290,7 @@ describe('Facilitator.confirmStakeIntent()', () => {
       [
         stakeParams.amount,
         stakeParams.beneficiary,
-        facilitator.gateway.gatewayAddress,
+        facilitator.gateway.address,
         stakeParams.nonce,
         stakeParams.gasPrice,
         stakeParams.gasLimit,
@@ -372,7 +347,7 @@ describe('Facilitator.confirmStakeIntent()', () => {
       [
         stakeParams.amount,
         stakeParams.beneficiary,
-        facilitator.gateway.gatewayAddress,
+        facilitator.gateway.address,
         stakeParams.nonce,
         stakeParams.gasPrice,
         stakeParams.gasLimit,
@@ -429,7 +404,7 @@ describe('Facilitator.confirmStakeIntent()', () => {
       [
         stakeParams.amount,
         stakeParams.beneficiary,
-        facilitator.gateway.gatewayAddress,
+        facilitator.gateway.address,
         stakeParams.nonce,
         stakeParams.gasPrice,
         stakeParams.gasLimit,
@@ -485,7 +460,7 @@ describe('Facilitator.confirmStakeIntent()', () => {
       [
         stakeParams.amount,
         stakeParams.beneficiary,
-        facilitator.gateway.gatewayAddress,
+        facilitator.gateway.address,
         stakeParams.nonce,
         stakeParams.gasPrice,
         stakeParams.gasLimit,

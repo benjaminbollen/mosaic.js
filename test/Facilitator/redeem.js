@@ -1,31 +1,11 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const sinon = require('sinon');
-const Facilitator = require('../../src/Facilitator/Facilitator');
-const TestMosaic = require('../../test_utils/GetTestMosaic');
+const Facilitator = require('../../src/Facilitator');
+const TestMosaic = require('../../test_utils/TestMosaic');
 const AssertAsync = require('../../test_utils/AssertAsync');
 const SpyAssert = require('../../test_utils/SpyAssert');
-
-const assert = chai.assert;
 
 describe('Facilitator.redeem()', () => {
   let mosaic;
@@ -106,10 +86,9 @@ describe('Facilitator.redeem()', () => {
   });
 
   it('should throw an error when redeemer address is undefined', async () => {
-    delete redeemParams.redeemer;
     await AssertAsync.reject(
       facilitator.redeem(
-        redeemParams.redeemer,
+        undefined,
         redeemParams.amount,
         redeemParams.beneficiary,
         redeemParams.gasPrice,
@@ -117,71 +96,67 @@ describe('Facilitator.redeem()', () => {
         redeemParams.hashLock,
         txOptions,
       ),
-      `Invalid redeemer address: ${redeemParams.redeemer}.`,
+      'Invalid redeemer address: undefined.',
     );
   });
 
   it('should throw an error when redeem amount is zero', async () => {
-    redeemParams.amount = '0';
     await AssertAsync.reject(
       facilitator.redeem(
         redeemParams.redeemer,
-        redeemParams.amount,
+        '0',
         redeemParams.beneficiary,
         redeemParams.gasPrice,
         redeemParams.gasLimit,
         redeemParams.hashLock,
         txOptions,
       ),
-      `Redeem amount must be greater than zero: ${redeemParams.amount}.`,
+      `Redeem amount must be greater than zero: ${'0'}.`,
     );
   });
 
   it('should throw an error when beneficiary address is undefined', async () => {
-    delete redeemParams.beneficiary;
     await AssertAsync.reject(
       facilitator.redeem(
         redeemParams.redeemer,
         redeemParams.amount,
-        redeemParams.beneficiary,
+        undefined,
         redeemParams.gasPrice,
         redeemParams.gasLimit,
         redeemParams.hashLock,
         txOptions,
       ),
-      `Invalid beneficiary address: ${redeemParams.beneficiary}.`,
+      'Invalid beneficiary address: undefined.',
     );
   });
 
   it('should throw an error when gas price is undefined', async () => {
-    delete redeemParams.gasPrice;
     await AssertAsync.reject(
       facilitator.redeem(
         redeemParams.redeemer,
         redeemParams.amount,
         redeemParams.beneficiary,
-        redeemParams.gasPrice,
+        undefined,
         redeemParams.gasLimit,
         redeemParams.hashLock,
         txOptions,
       ),
-      `Invalid gas price: ${redeemParams.gasPrice}.`,
+      'Invalid gas price: undefined.',
     );
   });
 
   it('should throw an error when gas limit is undefined', async () => {
-    delete redeemParams.gasLimit;
     await AssertAsync.reject(
       facilitator.redeem(
         redeemParams.redeemer,
         redeemParams.amount,
         redeemParams.beneficiary,
         redeemParams.gasPrice,
-        redeemParams.gasLimit,
+        undefined,
         redeemParams.hashLock,
         txOptions,
       ),
-      `Invalid gas limit: ${redeemParams.gasLimit}.`,
+      'Invalid gas limit: undefined.',
     );
   });
 
@@ -196,7 +171,7 @@ describe('Facilitator.redeem()', () => {
         undefined,
         txOptions,
       ),
-      `Invalid hash lock: ${undefined}.`,
+      'Invalid hash lock: undefined.',
     );
   });
 
@@ -211,7 +186,7 @@ describe('Facilitator.redeem()', () => {
         redeemParams.hashLock,
         undefined,
       ),
-      `Invalid transaction options: ${undefined}.`,
+      'Invalid transaction options: undefined.',
     );
   });
 

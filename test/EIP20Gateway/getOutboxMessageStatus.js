@@ -1,24 +1,6 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const Web3 = require('web3');
 const sinon = require('sinon');
 const EIP20Gateway = require('../../src/ContractInteract/EIP20Gateway');
@@ -27,7 +9,6 @@ const AssertAsync = require('../../test_utils/AssertAsync');
 const Message = require('../../src/utils/Message');
 
 const MessageStatus = Message.messageStatus();
-const assert = chai.assert;
 
 describe('EIP20Gateway.getOutboxMessageStatus()', () => {
   let web3;
@@ -69,11 +50,11 @@ describe('EIP20Gateway.getOutboxMessageStatus()', () => {
   it('should throw an error when message hash is undefined', async () => {
     await AssertAsync.reject(
       gateway.getOutboxMessageStatus(),
-      `Invalid message hash: ${undefined}.`,
+      'Invalid message hash: undefined.',
     );
   });
 
-  it('should return correct mocked message status', async () => {
+  it('should return correct message status', async () => {
     setup();
     const result = await gateway.getOutboxMessageStatus(messageHash);
     assert.strictEqual(

@@ -1,28 +1,8 @@
-// Copyright 2019 OpenST Ltd.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// ----------------------------------------------------------------------------
-//
-// http://www.simpletoken.org/
-//
-// ----------------------------------------------------------------------------
+'use strict';
 
-const chai = require('chai');
+const { assert } = require('chai');
 const Web3 = require('web3');
 const sinon = require('sinon');
-
-const assert = chai.assert;
 const EIP20CoGateway = require('../../src/ContractInteract/EIP20CoGateway');
 const SpyAssert = require('../../test_utils/SpyAssert');
 
@@ -65,10 +45,10 @@ describe('EIP20CoGateway.getNonce()', () => {
   it('should throw an error when account address is undefined', async () => {
     assert.throws(() => {
       coGateway.getNonce();
-    }, `Invalid account address: ${undefined}.`);
+    }, 'Invalid account address: undefined.');
   });
 
-  it('should return correct mocked nonce', async () => {
+  it('should return correct nonce', async () => {
     setup();
     const result = await coGateway.getNonce(accountAddress);
     assert.strictEqual(
